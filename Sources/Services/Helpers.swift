@@ -6,7 +6,7 @@ import Common
 import HTTP
 import JSON
 import URI
-@_exported import struct Foundation.Data
+import struct Foundation.Data
 
 //MARK: - Headers
 extension Sequence where Iterator.Element == (key: HeaderKey, value: String) {
