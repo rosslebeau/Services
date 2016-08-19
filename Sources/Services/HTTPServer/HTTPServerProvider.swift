@@ -1,7 +1,8 @@
+import Common
 import Vapor
 import HTTP
 import Routing
-@_exported import struct Foundation.URL
+import struct Foundation.URL
 
 final public class HTTPServerProvider: HTTPServer {
     //MARK: - Private
@@ -16,8 +17,16 @@ final public class HTTPServerProvider: HTTPServer {
     }
     
     //MARK: - Public
-    public func start() {
-        self.server.serve()
+    public func start(mode: HTTPServerMode) {
+        switch mode {
+        case .currentThread:
+            self.server.serve()
+        
+        case .newThread:
+            _ = inBackground {
+                self.server.serve()
+            }
+        }
     }
     public func respond(to method: HTTPRequestMethod, at path: [String], with handler: RouteHandler) {
         self.server.addResponder(method.method, path) { request in

@@ -1,5 +1,11 @@
 import Foundation
 
+//MARK: - Mode
+public enum HTTPServerMode {
+    case currentThread
+    case newThread
+}
+
 //MARK: Typealiases
 public typealias RouteHandler = (
     url: URL,
@@ -9,7 +15,7 @@ public typealias RouteHandler = (
 
 //MARK: - HTTPServer
 public protocol HTTPServer {
-    func start()
+    func start(mode: HTTPServerMode)
     
     func respond(
         to method: HTTPRequestMethod,
