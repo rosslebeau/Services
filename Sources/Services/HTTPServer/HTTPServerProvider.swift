@@ -13,17 +13,7 @@ final public class HTTPServerProvider: HTTPServer {
         self.server = server
     }
     public convenience init() {
-//        let port = Env.get("PORT")
-//        let droplet = Droplet(arguments: ["--config:servers.default.port=\(port)"])
-        let config = try! Config(seed:
-            JSON.object(["servers":
-                JSON.object(["default":
-                    JSON.object(["port": JSON.string("$PORT")])
-                    ])
-                ])
-        )
-        let droplet = Droplet(config: config)
-        self.init(server: droplet)
+        self.init(server: Droplet())
     }
     
     //MARK: - Public
