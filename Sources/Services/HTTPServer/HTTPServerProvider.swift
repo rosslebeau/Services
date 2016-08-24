@@ -13,8 +13,8 @@ final public class HTTPServerProvider: HTTPServer {
         self.server = server
     }
     public convenience init() {
-        let config = Vapor.Config(arguments: ["port": "$PORT"])
-        self.init(server: Droplet())
+        let config = try! Vapor.Config(arguments: ["--port=$PORT"])
+        self.init(server: Droplet(config: config))
     }
     
     //MARK: - Public
