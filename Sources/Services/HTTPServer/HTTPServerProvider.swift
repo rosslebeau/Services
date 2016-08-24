@@ -13,6 +13,7 @@ final public class HTTPServerProvider: HTTPServer {
         self.server = server
     }
     public convenience init() {
+        let config = Vapor.Config(arguments: ["port": "$PORT"])
         self.init(server: Droplet())
     }
     
