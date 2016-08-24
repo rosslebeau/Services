@@ -13,8 +13,9 @@ final public class HTTPServerProvider: HTTPServer {
         self.server = server
     }
     public convenience init() {
-        let config = try! Vapor.Config(arguments: ["--port=$PORT"])
-        self.init(server: Droplet(config: config))
+        let port = Env.get("PORT")
+        let droplet = Droplet(arguments: ["--config:servers.default.port=\(port)"])
+        self.init(server: droplet)
     }
     
     //MARK: - Public
