@@ -12,11 +12,11 @@ public final class RedisStorage: Storage {
         
         guard
             let host = url.host,
-            let port = (url as NSURL).port?.uint16Value,
+            let port = (url as URL).port,
             let password = url.password
             else { throw StorageError.invalidURL(url: urlString) }
         
-        try self.init(address: host, port: port, password: password)
+        try self.init(address: host, port: UInt16(port), password: password)
     }
     public required init(address: String, port: UInt16, password: String?) throws {
         let config = RedbirdConfig(address: address, port: port, password: password)
