@@ -28,7 +28,7 @@ public final class RedisStorage: Storage {
         let key = "\(`in`.namespace):\(key)"
         do {
             try self.client.command("DEL", params: [key])
-            try self.client.command("SET", params: [key] + [value.stringValue])
+            try self.client.command("SET", params: [key, value.stringValue])
         }
         catch let error { throw StorageError.internalError(error: error) }
     }
