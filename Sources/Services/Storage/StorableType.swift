@@ -28,7 +28,7 @@ extension Bool: StorableType {
         return self.stringValue
     }
     public static func makeValue(from string: String) throws -> Bool {
-        return Bool(stringLiteral: string)
+        return try Bool.make(from: string)
     }
 }
 extension Array: StorableType {
