@@ -5,6 +5,7 @@
 import Common
 import HTTP
 import JSON
+import Node
 import URI
 import struct Foundation.Data
 import struct Foundation.URL
@@ -72,6 +73,19 @@ extension Dictionary where Key: StringType, Value: Any {
             return (key.string, value)
         }
         return try JSON(Dictionary<String, JSONRepresentable>(input))
+    }
+    func makeURLEncodedObject() throws -> Body {
+        let input: [(String, Node)] = self.flatMap { key, value in
+            guard
+                let value = value as? StringRepresentable,
+                let string = value.makeString()
+                else { return nil }
+            
+            return (key.string, Node(string))
+        }
+        
+        let dict = Dictionary<String, Node>(input)
+        return Body(try dict.makeNode().formURLEncoded())
     }
 }
 

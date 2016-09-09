@@ -21,7 +21,7 @@ final public class HTTPProvider: HTTP {
             do {
                 let headers = request.headers ?? [:]
                 let parameters = request.parameters ?? [:]
-                let body = try request.body?.makeJSONObject().makeBody() ?? []
+                let body = try request.body?.makeURLEncodedObject() ?? []
                 response = try Client<TLSClientStream>.request(
                     request.method.method,
                     absoluteString,
@@ -48,4 +48,5 @@ final public class HTTPProvider: HTTP {
         }
     }
 }
+
 
