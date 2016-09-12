@@ -1,4 +1,3 @@
-import Redbird
 import Foundation
 
 /// Provides Redis based storage of key/value pairs

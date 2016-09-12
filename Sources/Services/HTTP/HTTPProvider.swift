@@ -1,5 +1,4 @@
 import Common
-import VaporTLS
 import HTTP
 
 /// Standard implementation of a HTTP
@@ -14,7 +13,7 @@ final public class HTTPProvider: HTTP {
             //(╯°□°）╯︵ ┻━┻
             let value: String? = request.url.absoluteString
             guard let absoluteString = value
-                else { throw HTTPError.invalidURL(url: String(request.url)) }
+                else { throw HTTPError.invalidURL(url: String(describing: request.url)) }
             
             let response: Response
             
@@ -22,11 +21,11 @@ final public class HTTPProvider: HTTP {
                 let headers = request.headers ?? [:]
                 let parameters = request.parameters ?? [:]
                 let body = try request.body?.makeURLEncodedObject() ?? []
-                response = try Client<TLSClientStream>.request(
+                response = try BasicClient.request(
                     request.method.method,
                     absoluteString,
                     headers: headers.makeHeaders(),
-                    query: parameters.makeQueryParameters(),
+                    query: parameters,
                     body: body
                 )
                 

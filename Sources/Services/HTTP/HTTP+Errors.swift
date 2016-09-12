@@ -27,7 +27,7 @@ public enum HTTPError: Error, CustomStringConvertible {
         case .serverError(let code):
             return "Server Error (\(code))"
         case .internalError(let error):
-            let nestedDescription = (error as? CustomStringConvertible)?.description ?? String(error)
+            let nestedDescription = (error as? CustomStringConvertible)?.description ?? String(describing: error)
             return "Internal Error: \(nestedDescription)"
         }
     }

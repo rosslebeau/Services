@@ -28,13 +28,16 @@ final public class HTTPServerProvider: HTTPServer {
             }
         }
     }
-    public func respond(to method: HTTPRequestMethod, at path: [String], with handler: RouteHandler) {
+    public func respond(to method: HTTPRequestMethod, at path: [String], with handler: @escaping RouteHandler) {
         self.server.addResponder(method.method, path) { request in
             let headers = request.headers
-            let json = request.json ?? (try? JSON(node: request.formURLEncoded)) ?? .null
             
             do {
-                guard let response = try handler(url: request.uri.makeURL(), headers: headers.makeDictionary(), json: json.makeDictionary())
+                guard let response = try handler(
+                    request.uri.makeURL(),
+                    headers.makeDictionary(),
+                    request.responseJson.makeDictionary()
+                    )
                     else { return Response(status: .ok) }
                 
                 return try response.makeResponse()
@@ -44,15 +47,18 @@ final public class HTTPServerProvider: HTTPServer {
             }
         }
     }
-    public func respond<T: AnyObject>(to method: HTTPRequestMethod, at path: [String], with object: T, _ function: (T) -> RouteHandler) {
+    public func respond<T: AnyObject>(to method: HTTPRequestMethod, at path: [String], with object: T, _ function: @escaping (T) -> RouteHandler) {
         self.server.addResponder(method.method, path) { [weak object] request in
             guard let object = object else { return Response(status: .internalServerError) }
             
             let headers = request.headers
-            let json = request.json ?? (try? JSON(node: request.formURLEncoded)) ?? .null
             
             do {
-                guard let response = try function(object)(url: request.uri.makeURL(), headers: headers.makeDictionary(), json: json.makeDictionary())
+                guard let response = try function(object)(
+                    request.uri.makeURL(),
+                    headers.makeDictionary(),
+                    request.responseJson.makeDictionary()
+                    )
                     else { return Response(status: .ok) }
                 
                 return try response.makeResponse()
@@ -64,11 +70,24 @@ final public class HTTPServerProvider: HTTPServer {
     }
 }
 
+extension Request {
+    var responseJson: JSON {
+        if let json = self.json {
+            return json
+            
+        } else if let formData = self.formURLEncoded, let json = try? JSON(node: formData) {
+            return json
+        }
+        
+        return JSON(.null)
+    }
+}
+
 extension Routing.RouteBuilder where Value == Responder {
     public func addResponder(
         _ method: Method,
         _ path: [String],
-        _ value: (Request) throws -> ResponseRepresentable
+        _ value: @escaping (Request) throws -> ResponseRepresentable
         ) {
         add(
             path: ["*", method.description] + path,
