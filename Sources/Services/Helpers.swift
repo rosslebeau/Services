@@ -4,8 +4,8 @@
 
 import Common
 import HTTP
-import JSON
 import Node
+import JSON
 import URI
 import struct Foundation.Data
 import struct Foundation.URL
@@ -22,23 +22,8 @@ extension Dictionary where Key: StringType, Value: StringType {
     }
 }
 
-//MARK: - Query
-extension Dictionary where Key: StringType, Value: StringType {
-    func makeQueryParameters() -> [String: CustomStringConvertible] {
-        let input = self.flatMap { key, value -> (String, CustomStringConvertible)? in
-            guard
-                let bytes = try? percentEncoded(value.string.bytes),
-                let encoded = String(data: Data(bytes: bytes), encoding: .utf8)
-                else { return nil }
-            
-            return (key.string, encoded)
-        }
-        return Dictionary<String, CustomStringConvertible>(input)
-    }
-}
-
-//MARK: - JSON
-extension JSON {
+//MARK: - Node 
+extension Node {
     var any: Any? {
         switch self {
         case .null: return nil
@@ -48,7 +33,7 @@ extension JSON {
             switch number {
             case .int(let value): return value
             case .double(let value): return value
-            case .uint(let value): return value
+            case .uint(let value): return Int(value)
             }
         case .array(let value):
             return value.flatMap { $0.any }
@@ -59,20 +44,25 @@ extension JSON {
                 result[key] = value
             }
             return result
+        case .bytes(let value): return value
         }
     }
+}
+
+//MARK: - JSON
+extension JSON {
     func makeDictionary() -> [String: Any]? {
-        guard let value = self.any as? [String: Any] else { return nil }
+        guard let value = self.node.any as? [String: Any] else { return nil }
         return value
     }
 }
 extension Dictionary where Key: StringType, Value: Any {
-    func makeJSONObject() throws -> JSON {
-        let input: [(String, JSONRepresentable)] = self.flatMap { key, value in
-            guard let value = value as? JSONRepresentable else { return nil }
-            return (key.string, value)
+    func makeObject() throws -> JSON {
+        let input: [(String, Node)] = try self.flatMap { key, value in
+            guard let value = value as? NodeConvertible else { return nil }
+            return (key.string, try value.makeNode())
         }
-        return try JSON(Dictionary<String, JSONRepresentable>(input))
+        return try JSON(node: Node(Dictionary<String, Node>(input)))
     }
     func makeURLEncodedObject() throws -> Body {
         let input: [(String, Node)] = self.flatMap { key, value in
@@ -106,7 +96,7 @@ extension HTTPRequestMethod {
 extension HTTPServerResponse {
     func makeResponse() throws -> Response {
         let headers = self.headers?.makeHeaders() ?? [:]
-        let body = try self.body?.makeJSONObject().makeBody() ?? .data([])
+        let body = try self.body?.makeObject().makeBody() ?? .data([])
         
         return Response(
             status: Status(statusCode: self.code),

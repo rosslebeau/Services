@@ -20,9 +20,9 @@ public enum StorageError: Error, CustomStringConvertible {
         case .invalidValue(let value):
             return "The value supplied was invalid: \(value)"
         case .unsupportedType(let value):
-            return "The type of value supplied was unsupported: \(String(value.self))"
+            return "The type of value supplied was unsupported: \(String(describing: value.self))"
         case .internalError(let error):
-            let nestedDescription = (error as? CustomStringConvertible)?.description ?? String(error)
+            let nestedDescription = (error as? CustomStringConvertible)?.description ?? String(describing: error)
             return "Internal Error: \(nestedDescription)"
         }
     }

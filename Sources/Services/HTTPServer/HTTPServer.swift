@@ -8,9 +8,9 @@ public enum HTTPServerMode {
 
 //MARK: Typealiases
 public typealias RouteHandler = (
-    url: URL,
-    headers: [String: String],
-    json: [String: Any]?
+    URL,
+    [String: String], //headers
+    [String: Any]? //json/data
     ) throws -> HTTPServerResponse?
 
 //MARK: - HTTPServer
@@ -20,14 +20,14 @@ public protocol HTTPServer {
     func respond(
         to method: HTTPRequestMethod,
         at path: [String],
-        with handler: RouteHandler
+        with handler: @escaping RouteHandler
     )
     
     func respond<T: AnyObject>(
         to method: HTTPRequestMethod,
         at path: [String],
         with object: T,
-        _ function: (T) -> RouteHandler
+        _ function: @escaping (T) -> RouteHandler
     )
 }
 

@@ -43,7 +43,7 @@ public final class PlistStorage: Storage {
 //MARK: - Helper
 private extension StorableType {
     var anyObject: AnyObject? {
-        return self as? AnyObject
+        return self as AnyObject
     }
 }
 #endif

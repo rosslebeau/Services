@@ -68,7 +68,7 @@ public enum WebSocketError: Error, CustomStringConvertible {
         case .invalidURL(let url):
             return "The provided url was invalid: \(url)"
         case .internalError(let error):
-            let nestedDescription = (error as? CustomStringConvertible)?.description ?? String(error)
+            let nestedDescription = (error as? CustomStringConvertible)?.description ?? String(describing: error)
             return "Internal Error: \(nestedDescription)"
         case .genericError(let reason):
             return "Generic Error: \(reason)"

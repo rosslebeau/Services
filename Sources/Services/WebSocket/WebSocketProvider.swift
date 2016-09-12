@@ -1,6 +1,6 @@
 import Foundation
 import Vapor
-import VaporTLS
+//import VaporTLS
 import HTTP
 import URI
 import Common
@@ -42,7 +42,7 @@ final public class WebSocketProvider: WebSocket {
         catch { throw WebSocketError.invalidURL(url: url) }
         
         do {
-            try Vapor.WebSocket.connect(to: uri, using: Client<TLSClientStream>.self) { [weak self] socket in
+            try Vapor.WebSocket.connect(to: uri, using: BasicClient.self) { [weak self] socket in
                 guard let `self` = self else { return }
                 
                 self.socket = socket
@@ -58,7 +58,7 @@ final public class WebSocketProvider: WebSocket {
     }
     public func send(_ json: [String: Any]) {
         do {
-            let data = try json.makeJSONObject().makeBytes().toString()
+            let data = try json.makeObject().makeBytes().toString()
             try self.socket?.send(data)
             
         } catch let error {
