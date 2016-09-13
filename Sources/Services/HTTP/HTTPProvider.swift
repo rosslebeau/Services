@@ -1,10 +1,16 @@
 import Common
 import HTTP
+import TLS
+import Transport
 
 /// Standard implementation of a HTTP
 final public class HTTPProvider: HTTP {
     //MARK: - Public
-    public init() { }
+    public init() {
+        defaultClientConfig = {
+            return try TLS.Config(context: try Context(mode: .client), certificates: .none, verifyHost: false, verifyCertificates: false, cipher: .compat)
+        }
+    }
     
     public func perform(with request: HTTPRequest) throws -> (headers: [String: String], json: [String: Any]) {
         do {
