@@ -22,10 +22,10 @@ public protocol Storage: class {
      - parameter type:  The `Type` of `value`
      - parameter in:    The `StorageNamespace` to store the key/value pair under
      - parameter key:   A unique key to store `value` under
-     - parameter value: The value being stored
+     - parameter value: The value being stored, nil will delete it
      - throws: A `StorageError` with failure details
      */
-    func set<T: StorableType>(_ type: T.Type, in: StorageNamespace, key: String, value: T) throws
+    func set<T: StorableType>(_ type: T.Type, in: StorageNamespace, key: String, value: T?) throws
     
     /**
      Retrieves a value by its key under a namespace
@@ -44,10 +44,10 @@ public extension Storage {
      
      - parameter in:    The `StorageNamespace` to store the key/value pair under
      - parameter key:   A unique key to store `value` under
-     - parameter value: The value being stored
+     - parameter value: The value being stored, nil will delete it
      - throws: A `StorageError` with failure details
      */
-    public func set<T: StorableType>(_ in: StorageNamespace, key: String, value: T) throws {
+    public func set<T: StorableType>(_ in: StorageNamespace, key: String, value: T?) throws {
         try self.set(T.self, in: `in`, key: key, value: value)
     }
     

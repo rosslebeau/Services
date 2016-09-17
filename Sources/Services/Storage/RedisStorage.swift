@@ -23,11 +23,13 @@ public final class RedisStorage: Storage {
     }
     
     //MARK: - Storage
-    public func set<T: StorableType>(_ type: T.Type, in: StorageNamespace, key: String, value: T) throws {
+    public func set<T: StorableType>(_ type: T.Type, in: StorageNamespace, key: String, value: T?) throws {
         let key = "\(`in`.namespace):\(key)"
         do {
             try self.client.command("DEL", params: [key])
-            try self.client.command("SET", params: [key, value.stringValue])
+            if let value = value {
+                try self.client.command("SET", params: [key, value.stringValue])
+            }
         }
         catch let error { throw StorageError.internalError(error: error) }
     }

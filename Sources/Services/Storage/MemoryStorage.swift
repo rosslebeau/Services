@@ -7,9 +7,13 @@ public final class MemoryStorage: Storage {
     public init() { }
     
     //MARK: - Storage
-    public func set<T: StorableType>(_ type: T.Type, in: StorageNamespace, key: String, value: T) throws {
+    public func set<T: StorableType>(_ type: T.Type, in: StorageNamespace, key: String, value: T?) throws {
         var data = self.data[`in`.namespace] ?? [:]
-        data[key] = value
+        if let value = value {
+            data[key] = value
+        } else {
+            data.removeValue(forKey: key)
+        }
         self.data[`in`.namespace] = data
     }
     public func get<T: StorableType>(_ type: T.Type, in: StorageNamespace, key: String) -> T? {

@@ -8,12 +8,18 @@ public final class PlistStorage: Storage {
     public init() { }
     
     //MARK: - Storage
-    public func set<T: StorableType>(_ type: T.Type, in: StorageNamespace, key: String, value: T) throws {
+    public func set<T: StorableType>(_ type: T.Type, in: StorageNamespace, key: String, value: T?) throws {
         var dataset = self.dataset()
         var data = dataset[`in`.namespace] ?? [:]
         
-        guard let anyObject = value.anyObject else { throw StorageError.invalidValue(value: value) }
-        data[key] = anyObject
+        if let value = value {
+            guard let anyObject = value.anyObject else { throw StorageError.invalidValue(value: value) }
+            data[key] = anyObject
+
+        } else {
+            data.removeValue(forKey: key)
+        }
+        
         dataset[`in`.namespace] = data
         
         self.saveDataset(dataset)
