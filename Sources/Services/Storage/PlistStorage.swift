@@ -29,6 +29,10 @@ public final class PlistStorage: Storage {
         var data = dataset[`in`.namespace] ?? [:]
         return data[key] as? T
     }
+    public func allKeys(_ in: StorageNamespace) -> [String] {
+        guard let data = self.dataset()[`in`.namespace] else { return [] }
+        return Array(data.keys)
+    }
     
     //MARK: - Private
     private var fileName: String {

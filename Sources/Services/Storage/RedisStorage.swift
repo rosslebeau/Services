@@ -42,4 +42,14 @@ public final class RedisStorage: Storage {
         }
         catch let error { print("\(error)"); return nil }
     }
+    public func allKeys(_ in: StorageNamespace) -> [String] {
+        do {
+            let result = try self.client.command("KEYS", params: ["\(`in`.namespace):*"])
+            guard let responsesArray = try result.toMaybeArray() else { return [] }
+            return try responsesArray
+                .flatMap { try $0.toMaybeString() }
+                .map { String($0.characters.dropFirst(`in`.namespace.characters.count + 1)) }
+        }
+        catch let error { print("\(error)"); return [] }
+    }
 }

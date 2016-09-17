@@ -36,6 +36,14 @@ public protocol Storage: class {
      - returns: returns the value if a value was found with the provided key under the namespace and the type matches `type`, otherwise nil
      */
     func get<T: StorableType>(_ type: T.Type, in: StorageNamespace, key: String) -> T?
+    
+    /**
+     Retrieves all keys in a namespace
+     
+     - parameter in:   The `StorageNamespace` of the desired keys
+     - returns: returns an array that contains every key in the namespace
+     */
+    func allKeys(_ in: StorageNamespace) -> [String]
 }
 
 public extension Storage {

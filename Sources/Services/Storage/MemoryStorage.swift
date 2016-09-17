@@ -19,4 +19,8 @@ public final class MemoryStorage: Storage {
     public func get<T: StorableType>(_ type: T.Type, in: StorageNamespace, key: String) -> T? {
         return self.data[`in`.namespace]?[key] as? T
     }
+    public func allKeys(_ in: StorageNamespace) -> [String] {
+        guard let data = self.data[`in`.namespace] else { return [] }
+        return Array(data.keys)
+    }
 }
